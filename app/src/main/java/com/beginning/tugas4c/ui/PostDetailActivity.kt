@@ -14,13 +14,17 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import com.beginning.tugas4c.data.repository.PostRepository
 import com.beginning.tugas4c.data.model.Post
+import com.beginning.tugas4c.databinding.ActivityPostDetailBinding
+import com.beginning.tugas4c.databinding.ActivityPostsListBinding
 
 class PostDetailActivity : AppCompatActivity() {
     private lateinit var viewModel: PostViewModel
+    private lateinit var binding: ActivityPostDetailBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_post_detail)
+        binding = ActivityPostDetailBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         val postId = intent.getIntExtra("POST_ID", -1)
         if (postId == -1) {
@@ -39,24 +43,24 @@ class PostDetailActivity : AppCompatActivity() {
     }
 
     private fun loadPost(postId: Int) {
-        progressBar.visibility = View.VISIBLE
+        binding.progressBar.visibility = View.VISIBLE
         viewModel.getPostById(
             postId,
             onSuccess = { post ->
-                progressBar.visibility = View.GONE
+                binding.progressBar.visibility = View.GONE
                 displayPost(post)
             },
             onError = { error ->
-                progressBar.visibility = View.GONE
+                binding.progressBar.visibility = View.GONE
                 Toast.makeText(this, "Error: $error", Toast.LENGTH_LONG).show()
             }
         )
     }
 
     private fun displayPost(post: Post) {
-        titleTextView.text = post.title
-        bodyTextView.text = post.body
-        userIdTextView.text = "User ID: ${post.userId}"
-        idTextView.text = "Post ID: ${post.id}"
+        binding.titleTextView.text = post.title
+        binding.bodyTextView.text = post.body
+        binding.userIdTextView.text = "User ID: ${post.userId}"
+        binding.idTextView.text = "Post ID: ${post.id}"
     }
 }

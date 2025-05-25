@@ -3,23 +3,27 @@ package com.beginning.tugas4c.ui
 import PostViewModel
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import android.view.View
 import android.widget.Toast
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.beginning.tugas4c.R
 import com.beginning.tugas4c.data.repository.PostRepository
-
+import com.beginning.tugas4c.databinding.ActivityPostsListBinding
 
 class PostsListActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityPostsListBinding
     private lateinit var viewModel: PostViewModel
     private lateinit var adapter: PostsAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_posts_list)
+        binding = ActivityPostsListBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         setupViewModel()
         setupRecyclerView()
@@ -39,30 +43,21 @@ class PostsListActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        postsRecyclerView.layoutManager = LinearLayoutManager(this)
-        postsRecyclerView.adapter = adapter
+        binding.postsRecyclerView.layoutManager = LinearLayoutManager(this)
+        binding.postsRecyclerView.adapter = adapter
     }
 
     private fun loadPosts() {
-        progressBar.visibility = View.VISIBLE
+        binding.progressBar.visibility = View.VISIBLE
         viewModel.loadPosts(
             onSuccess = {
-                progressBar.visibility = View.GONE
+                binding.progressBar.visibility = View.GONE
                 adapter.notifyDataSetChanged()
             },
             onError = { error ->
-                progressBar.visibility = View.GONE
+                binding.progressBar.visibility = View.GONE
                 Toast.makeText(this, "Error: $error", Toast.LENGTH_LONG).show()
             }
         )
-    }
-}
-
-class ViewModelFactory(private val repository: PostRepository) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(PostViewModel::class.java)) {
-            return PostViewModel(repository) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
